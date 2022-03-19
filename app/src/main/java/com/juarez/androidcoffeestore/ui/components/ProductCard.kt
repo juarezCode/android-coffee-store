@@ -44,7 +44,7 @@ enum class CountryISO(val iso: String) {
         }
     }
 
-    fun getSurface(): Color {
+    fun getSurfaceColor(): Color {
         return when (this) {
             COL, NIC -> PlatziBlue
             BRA, CRI -> PlatziGreen
@@ -54,20 +54,29 @@ enum class CountryISO(val iso: String) {
 
 
 @Composable
-fun ProductCard(name: String, summary: String, price: Double, currency: String) {
+fun ProductCard(
+    name: String,
+    summary: String,
+    price: Double,
+    currency: String,
+    country: CountryISO,
+    selected: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .clickable { }
+            .clickable {
+                selected()
+            }
             .size(480.dp),
         elevation = 10.dp,
         shape = MaterialTheme.shapes.small
     ) {
-        Image(painter = painterResource(R.drawable.co), contentDescription = null)
+        Image(painter = painterResource(country.getBackgroundImage()), contentDescription = null)
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = PlatziBlue.copy(0.2f)
+            color = country.getSurfaceColor().copy(0.2f)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -81,7 +90,7 @@ fun ProductCard(name: String, summary: String, price: Double, currency: String) 
                 ) {
                     Row {
                         Image(
-                            painter = painterResource(id = R.drawable.flagco),
+                            painter = painterResource(id = country.getCountryFlag()),
                             contentDescription = null,
                             modifier = Modifier.size(32.dp)
                         )
@@ -104,6 +113,12 @@ fun ProductCard(name: String, summary: String, price: Double, currency: String) 
 @Composable
 fun ProductCardPreview() {
     AndroidCoffeeStoreTheme {
-        ProductCard("Cafe de colombia", "Cafe de origen de las montañas", 35.0, "USD")
+        ProductCard(
+            "Cafe de Brasil",
+            "Cafe de origen de las montañas",
+            35.0,
+            "USD",
+            CountryISO.BRA
+        ) {}
     }
 }
